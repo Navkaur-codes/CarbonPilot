@@ -19,9 +19,9 @@ export default function LoadingCard({ count = 3 }) {
           </div>
           
           <div className="flex gap-4 pt-2 border-t border-slate-50 dark:border-slate-800/40">
-            <div className="h-4 bg-slate-150 dark:bg-slate-850 rounded w-1/4"></div>
-            <div className="h-4 bg-slate-150 dark:bg-slate-850 rounded w-1/4"></div>
-            <div className="h-4 bg-slate-150 dark:bg-slate-850 rounded w-1/4"></div>
+            <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded w-1/4"></div>
+            <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded w-1/4"></div>
+            <div className="h-4 bg-slate-100 dark:bg-slate-800 rounded w-1/4"></div>
           </div>
         </div>
       ))}

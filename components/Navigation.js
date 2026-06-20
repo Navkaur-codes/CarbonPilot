@@ -43,7 +43,7 @@ export default function Navigation() {
                   className={`px-4 py-2 rounded-xl text-sm font-medium transition focus:ring-2 focus:ring-emerald-500 focus:outline-none ${
                     isActive 
                       ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' 
-                      : 'text-slate-600 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   {link.name}
@@ -95,7 +95,7 @@ export default function Navigation() {
                 className={`block px-4 py-2.5 rounded-xl text-base font-semibold focus:ring-2 focus:ring-emerald-500 focus:outline-none ${
                   isActive 
                     ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' 
-                    : 'text-slate-600 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-900'
+                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900'
                 }`}
               >
                 {link.name}

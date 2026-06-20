@@ -68,7 +68,7 @@ export default function RecommendationCard({ rec }) {
 
         <div className="col-span-2 sm:col-span-1">
           <span className="block text-slate-400 dark:text-slate-500 mb-1">Cost</span>
-          <span className="inline-block font-semibold text-slate-700 dark:text-slate-350 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full">
+          <span className="inline-block font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full">
             {estimatedCost}
           </span>
         </div>

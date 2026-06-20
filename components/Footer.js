@@ -13,7 +13,7 @@ export default function Footer() {
             </p>
           </div>
           <div className="text-xs text-slate-500 dark:text-slate-400 max-w-sm text-center sm:text-right">
-            <span className="font-semibold block text-slate-650 dark:text-slate-350">
+            <span className="font-semibold block text-slate-600 dark:text-slate-300">
               Disclaimer: {DISCLAIMER}
             </span>
             <p className="mt-1">

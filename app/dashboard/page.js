@@ -118,49 +118,62 @@ export default function Dashboard() {
   const completeness = calculateCompleteness(profile || {});
   const { percentages, topOpportunity } = getBreakdownAndOpportunity(latestLog.categories, latestLog.totalMonthly);
 
-  // Generate dynamic achievements list based on history values
-  const achievements = [
+  // Calculate dynamic insights if history has at least 2 entries
+  let pctTotalChange = 0;
+  let maxCatName = '';
+  let catChangeDirection = '↓';
+  let catChangePct = 0;
+
+  if (history.length >= 2) {
+    const current = history[history.length - 1];
+    const previous = history[history.length - 2];
+    const diffTotal = previous.totalMonthly - current.totalMonthly;
+    pctTotalChange = previous.totalMonthly > 0 ? Math.round((diffTotal / previous.totalMonthly) * 100) : 0;
+
+    let maxCatDiff = -1;
+    const categoryMapping = {
+      transport: 'Transport',
+      electricity: 'Energy',
+      food: 'Food',
+      shopping: 'Shopping',
+      waste: 'Waste'
+    };
+
+    Object.keys(current.categories).forEach(cat => {
+      const prevVal = previous.categories[cat] || 0;
+      const currVal = current.categories[cat] || 0;
+      const diff = prevVal - currVal;
+      if (Math.abs(diff) > maxCatDiff) {
+        maxCatDiff = Math.abs(diff);
+        maxCatName = categoryMapping[cat] || cat;
+        catChangeDirection = diff >= 0 ? '↓' : '↑';
+        catChangePct = prevVal > 0 ? Math.round((Math.abs(diff) / prevVal) * 100) : 0;
+      }
+    });
+  }
+
+  // Generate dynamic milestones list based on history values
+  const milestones = [
     {
       id: 'ach-first',
-      title: 'First Step',
-      desc: 'Completed your first carbon assessment log.',
+      title: 'Completed First Assessment',
+      desc: 'Logged at least one footprint profile entry.',
       unlocked: history.length >= 1,
       icon: '🌱',
     },
     {
       id: 'ach-eco-conscious',
-      title: 'Eco Conscious',
-      desc: 'Yearly footprint is below the US average (16 tons).',
-      unlocked: latestLog.totalYearly < 16000,
+      title: 'Generated First Plan',
+      desc: 'Structured a personalized weekly goals planner.',
+      unlocked: goals && goals.length > 0,
       icon: '🛡️',
     },
     {
       id: 'ach-green-commute',
-      title: 'Green Commuter',
-      desc: 'Drive less than 50 km per week.',
-      unlocked: parseFloat(profile?.carKmPerWeek) < 50,
+      title: 'Ran First Simulation',
+      desc: 'Adjusted habit sliders inside the Simulator.',
+      unlocked: history.length >= 1,
       icon: '🚴',
-    },
-    {
-      id: 'ach-diet-champ',
-      title: 'Green Diet Champion',
-      desc: 'Have 0 weekly meat meals.',
-      unlocked: parseFloat(profile?.meatMealsPerWeek) === 0,
-      icon: '🥗',
-    },
-    {
-      id: 'ach-recycler',
-      title: 'Zero Waste Hero',
-      desc: 'Recycle all eligible household products.',
-      unlocked: profile?.recyclingHabits === 'all',
-      icon: '♻️',
-    },
-    {
-      id: 'ach-streaker',
-      title: 'Super Streaker',
-      desc: 'Improve footprint across 3 consecutive assessments.',
-      unlocked: streak >= 3,
-      icon: '🔥',
     }
   ];
 
@@ -191,14 +204,14 @@ export default function Dashboard() {
         <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={handleExport}
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-505 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-sm transition flex items-center gap-1 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs sm:text-sm rounded-xl shadow-sm transition flex items-center gap-1 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
             aria-label="Export carbon assessment results as a JSON report"
           >
             <span>📥</span> Export Report (.json)
           </button>
           <button
             onClick={handleResetData}
-            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-350 font-semibold text-xs sm:text-sm rounded-xl transition flex items-center gap-1 focus:ring-2 focus:ring-slate-400 focus:outline-none"
+            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold text-xs sm:text-sm rounded-xl transition flex items-center gap-1 focus:ring-2 focus:ring-slate-400 focus:outline-none"
             aria-label="Reset and delete all local carbon data"
           >
             <span>🗑️</span> Reset Data
@@ -212,7 +225,7 @@ export default function Dashboard() {
           <span className="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             Latest Footprint
           </span>
-          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-450">
+          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-400">
             {latestLog.totalMonthly.toFixed(1)} <span className="text-sm font-semibold text-slate-400">kg/mo</span>
           </span>
         </div>
@@ -221,7 +234,7 @@ export default function Dashboard() {
           <span className="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             Yearly Projection
           </span>
-          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-450">
+          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-400">
             {(latestLog.totalYearly / 1000).toFixed(2)} <span className="text-sm font-semibold text-slate-400">tons/yr</span>
           </span>
         </div>
@@ -230,7 +243,7 @@ export default function Dashboard() {
           <span className="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             Reduction Streak
           </span>
-          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-450 flex items-center gap-1.5">
+          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
             🔥 {streak} <span className="text-sm font-semibold text-slate-400">logs improved</span>
           </span>
         </div>
@@ -239,23 +252,44 @@ export default function Dashboard() {
           <span className="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             Form Confidence
           </span>
-          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-450">
+          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-400">
             {completeness}% <span className="text-sm font-semibold text-slate-400">High</span>
           </span>
         </div>
       </section>
 
+      {/* Dynamic Insights Panel */}
+      {history.length >= 2 && (
+        <section className="p-6 bg-emerald-500/5 border border-emerald-100 dark:border-slate-800 rounded-2xl space-y-2" aria-label="Carbon Intelligence Insights">
+          <h3 className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-100 text-base">
+            <span>💡</span> Carbon Intelligence Insights
+          </h3>
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            Your carbon footprint is{' '}
+            <strong className={pctTotalChange >= 0 ? "text-emerald-600" : "text-rose-600 font-bold"}>
+              {Math.abs(pctTotalChange)}% {pctTotalChange >= 0 ? 'lower' : 'higher'}
+            </strong>{' '}
+            than your previous estimate.
+          </p>
+          {maxCatName && (
+            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
+              Largest sector shift: <span className="text-emerald-600 dark:text-emerald-400 font-bold">{maxCatName} {catChangeDirection} {catChangePct}%</span>
+            </div>
+          )}
+        </section>
+      )}
+
       {/* Chart Section */}
       <section className="grid lg:grid-cols-2 gap-8" aria-label="Emissions Analytics Charts">
         <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-150">
+          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
             Assessment History Trend
           </h3>
           <ChartSection data={history} type="trend" />
         </div>
 
         <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 rounded-3xl shadow-sm space-y-4">
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-150">
+          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
             Category Breakdown (kg CO₂)
           </h3>
           <ChartSection data={breakdownChartData} type="breakdown" />
@@ -276,7 +310,7 @@ export default function Dashboard() {
       {goals && goals.length > 0 && (
         <section className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm space-y-6" aria-labelledby="goals-heading">
           <div className="space-y-1">
-            <h3 id="goals-heading" className="text-xl font-bold text-slate-800 dark:text-slate-150">
+            <h3 id="goals-heading" className="text-xl font-bold text-slate-800 dark:text-slate-100">
               Personalized 3-Week Goal Tracker
             </h3>
             <p className="text-xs text-slate-400 dark:text-slate-500">
@@ -318,7 +352,7 @@ export default function Dashboard() {
                   <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                     {goal.action}
                   </p>
-                  <span className="inline-block text-[11px] font-bold text-emerald-600 dark:text-emerald-450 bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 rounded-md mt-1">
+                  <span className="inline-block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 rounded-md mt-1">
                     Target: {goal.target}
                   </span>
                 </div>
@@ -331,7 +365,7 @@ export default function Dashboard() {
       {/* Dynamic Coaching Recommendations */}
       <section className="space-y-6" aria-labelledby="coach-recommendations">
         <div className="space-y-1">
-          <h3 id="coach-recommendations" className="text-xl font-bold text-slate-800 dark:text-slate-150">
+          <h3 id="coach-recommendations" className="text-xl font-bold text-slate-800 dark:text-slate-100">
             🤖 Active Coaching Suggestions
           </h3>
           <p className="text-xs text-slate-400 dark:text-slate-500">
@@ -346,19 +380,19 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Achievements Wall */}
-      <section className="space-y-6" aria-labelledby="achievements-heading">
+      {/* Milestones & Progress Wall */}
+      <section className="space-y-6" aria-labelledby="milestones-heading">
         <div className="space-y-1">
-          <h3 id="achievements-heading" className="text-xl font-bold text-slate-800 dark:text-slate-150">
-            🏆 Achievements & Badges
+          <h3 id="milestones-heading" className="text-xl font-bold text-slate-800 dark:text-slate-100">
+            🏆 Milestones & Progress
           </h3>
           <p className="text-xs text-slate-400 dark:text-slate-500">
-            Unlock credentials as you make eco-friendly reductions and log carbon metrics.
+            Track your milestones as you build eco-friendly routines and log carbon profiles.
           </p>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {achievements.map((ach) => (
+          {milestones.map((ach) => (
             <div 
               key={ach.id} 
               className={`p-5 rounded-2xl border transition duration-150 text-center flex flex-col items-center justify-center space-y-2 ${
@@ -369,15 +403,15 @@ export default function Dashboard() {
             >
               <span className="text-4xl" role="img" aria-label={ach.title}>{ach.icon}</span>
               <div>
-                <span className="block font-bold text-sm text-slate-800 dark:text-slate-150">{ach.title}</span>
-                <span className="block text-[11px] text-slate-450 mt-0.5">{ach.desc}</span>
+                <span className="block font-bold text-sm text-slate-800 dark:text-slate-100">{ach.title}</span>
+                <span className="block text-[11px] text-slate-400 mt-0.5">{ach.desc}</span>
               </div>
               <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
                 ach.unlocked 
-                  ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400' 
+                  ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-400' 
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
               }`}>
-                {ach.unlocked ? 'Unlocked' : 'Locked'}
+                {ach.unlocked ? 'Reached' : 'Pending'}
               </span>
             </div>
           ))}

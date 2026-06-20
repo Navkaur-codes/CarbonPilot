@@ -111,7 +111,7 @@ export default function Simulator() {
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Sliders panel */}
         <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm space-y-8">
-          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-150 border-b border-slate-50 dark:border-slate-800 pb-3">
+          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 border-b border-slate-50 dark:border-slate-800 pb-3">
             Simulation Control panel
           </h3>
 
@@ -232,7 +232,7 @@ export default function Simulator() {
               <span className="block text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">
                 Footprint Reduced
               </span>
-              <p className="text-xs text-slate-550 dark:text-slate-400 pt-2 font-medium">
+              <p className="text-xs text-slate-500 dark:text-slate-400 pt-2 font-medium">
                 Simulated Footprint: <strong>{simulatedFootprint.totalMonthly.toFixed(1)} kg/mo</strong> <br />
                 Baseline Footprint: <strong>{currentFootprint.totalMonthly.toFixed(1)} kg/mo</strong>
               </p>
@@ -240,7 +240,7 @@ export default function Simulator() {
 
             {/* Savings equivalence blocks */}
             {yearlySavings > 0 ? (
-              <div className="space-y-4 pt-4 border-t border-slate-55 dark:border-slate-800/40 text-xs">
+              <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-800/40 text-xs">
                 <span className="block font-bold text-slate-400 uppercase tracking-wider">
                   Equivalencies Saved
                 </span>
@@ -276,7 +276,7 @@ export default function Simulator() {
             )}
 
             {/* Comparison Bar chart */}
-            <div className="pt-4 border-t border-slate-55 dark:border-slate-800/40">
+            <div className="pt-4 border-t border-slate-200 dark:border-slate-800/40">
               <ChartSection data={comparisonChartData} type="breakdown" />
             </div>
           </div>

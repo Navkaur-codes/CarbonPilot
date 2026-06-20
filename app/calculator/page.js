@@ -198,7 +198,7 @@ export default function Calculator() {
               
               {/* Transport section */}
               <fieldset className="space-y-4">
-                <legend className="text-lg font-bold text-slate-800 dark:text-slate-150 flex items-center gap-2">
+                <legend className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                   <span>🚗</span> Transport Habits
                 </legend>
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -250,7 +250,7 @@ export default function Calculator() {
 
               {/* Energy section */}
               <fieldset className="space-y-4">
-                <legend className="text-lg font-bold text-slate-800 dark:text-slate-150 flex items-center gap-2">
+                <legend className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                   <span>💡</span> Household Energy
                 </legend>
                 <div className="space-y-1">
@@ -278,7 +278,7 @@ export default function Calculator() {
 
               {/* Food & Diet Section */}
               <fieldset className="space-y-4">
-                <legend className="text-lg font-bold text-slate-800 dark:text-slate-150 flex items-center gap-2">
+                <legend className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                   <span>🍲</span> Food & Diet
                 </legend>
                 <div className="space-y-1">
@@ -306,7 +306,7 @@ export default function Calculator() {
 
               {/* Shopping & waste section */}
               <fieldset className="space-y-4">
-                <legend className="text-lg font-bold text-slate-800 dark:text-slate-150 flex items-center gap-2">
+                <legend className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
                   <span>🛍️</span> Shopping & Waste
                 </legend>
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -356,7 +356,7 @@ export default function Calculator() {
                 disabled={Object.keys(errors).length > 0}
                 className={`w-full py-4 rounded-2xl font-bold shadow-md transition focus:ring-2 focus:ring-emerald-500 focus:outline-none ${
                   Object.keys(errors).length > 0
-                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-650'
+                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed dark:bg-slate-800 dark:text-slate-600'
                     : 'bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer'
                 }`}
               >
@@ -380,7 +380,7 @@ export default function Calculator() {
                   kg CO₂ / month
                 </span>
                 <span className="block text-sm text-slate-500 dark:text-slate-400 mt-2 font-medium">
-                  Yearly Projection: <strong className="text-slate-700 dark:text-slate-350">{calculations.totalYearly.toFixed(1)} kg</strong>
+                  Yearly Projection: <strong className="text-slate-700 dark:text-slate-300">{calculations.totalYearly.toFixed(1)} kg</strong>
                 </span>
               </div>
 
@@ -392,7 +392,7 @@ export default function Calculator() {
                 </div>
                 <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                   <div 
-                    className="bg-emerald-500 h-full rounded-full transition-all duration-355" 
+                    className="bg-emerald-500 h-full rounded-full transition-all duration-300" 
                     style={{ width: `${completeness}%` }}
                   ></div>
                 </div>
@@ -405,23 +405,23 @@ export default function Calculator() {
                     Breakdown
                   </span>
                   <div className="space-y-2 text-xs">
-                    <div className="flex justify-between items-center text-slate-650 dark:text-slate-350">
+                    <div className="flex justify-between items-center text-slate-600 dark:text-slate-300">
                       <span className="flex items-center gap-1">🚗 Transport</span>
                       <span className="font-bold">{percentages.transport}%</span>
                     </div>
-                    <div className="flex justify-between items-center text-slate-650 dark:text-slate-350">
+                    <div className="flex justify-between items-center text-slate-600 dark:text-slate-300">
                       <span className="flex items-center gap-1">💡 Energy</span>
                       <span className="font-bold">{percentages.electricity}%</span>
                     </div>
-                    <div className="flex justify-between items-center text-slate-650 dark:text-slate-350">
+                    <div className="flex justify-between items-center text-slate-600 dark:text-slate-300">
                       <span className="flex items-center gap-1">🍲 Food</span>
                       <span className="font-bold">{percentages.food}%</span>
                     </div>
-                    <div className="flex justify-between items-center text-slate-650 dark:text-slate-350">
+                    <div className="flex justify-between items-center text-slate-600 dark:text-slate-300">
                       <span className="flex items-center gap-1">🛍️ Shopping</span>
                       <span className="font-bold">{percentages.shopping}%</span>
                     </div>
-                    <div className="flex justify-between items-center text-slate-650 dark:text-slate-350">
+                    <div className="flex justify-between items-center text-slate-600 dark:text-slate-300">
                       <span className="flex items-center gap-1">♻️ Waste</span>
                       <span className="font-bold">{percentages.waste}%</span>
                     </div>
@@ -432,7 +432,7 @@ export default function Calculator() {
               {/* Equivalence Visual */}
               {calculations.totalYearly > 0 && (
                 <div className="pt-4 border-t border-slate-50 dark:border-slate-800/40 text-xs text-slate-500 dark:text-slate-400 space-y-1 bg-emerald-500/5 p-4 rounded-xl">
-                  <span className="block font-bold text-slate-700 dark:text-slate-350 text-[11px] uppercase tracking-wider">
+                  <span className="block font-bold text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wider">
                     Equivalence
                   </span>
                   <p>

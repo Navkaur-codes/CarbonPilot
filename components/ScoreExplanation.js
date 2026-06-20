@@ -45,7 +45,7 @@ export default function ScoreExplanation({ categories, totalMonthly, percentages
     title: 'Your carbon footprint is well-balanced',
     desc: 'No single category dominates your score. Maintaining a balanced conservation strategy is recommended.',
     advice: 'Try completing the What-If Simulator to fine-tune your carbon output.',
-    color: 'border-slate-200 bg-slate-50/50 text-slate-800 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-350',
+    color: 'border-slate-200 bg-slate-50/50 text-slate-800 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-300',
     icon: '🌱',
   };
 

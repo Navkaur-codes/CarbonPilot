@@ -32,12 +32,12 @@ export default function Home() {
             <span className="text-emerald-300">Environmental Footprint</span>
           </h1>
           <p className="text-sm sm:text-base md:text-lg text-emerald-100/90 leading-relaxed font-medium">
-            CarbonPilot helps you measure your lifestyle carbon output, simulates habit transitions, and generates rule-backed coaching recommendations—completely private and run on-device.
+            Measure your footprint, simulate habit adjustments, and receive personalized coaching—securely in your browser.
           </p>
           <div className="flex flex-wrap gap-3 pt-4">
             <Link
               href="/calculator"
-              className="px-6 py-3 bg-white hover:bg-emerald-50 text-emerald-800 font-bold rounded-xl shadow-md transition focus:ring-2 focus:ring-emerald-350 focus:outline-none"
+              className="px-6 py-3 bg-white hover:bg-emerald-50 text-emerald-800 font-bold rounded-xl shadow-md transition focus:ring-2 focus:ring-emerald-300 focus:outline-none"
             >
               Start Carbon Assessment
             </Link>
@@ -67,25 +67,25 @@ export default function Home() {
         
         <div className="p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-2xl shadow-sm space-y-3">
           <div className="text-3xl" aria-hidden="true">🧮</div>
-          <h3 className="font-bold text-lg text-slate-800 dark:text-slate-150">1. Carbon Calculator</h3>
+          <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">1. Carbon Calculator</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-            Record parameters across commute miles, public transit, energy bills, diet, and shopping to project your yearly emissions by category.
+            Record commute, public transit, energy, diet, and shopping inputs to project your footprint by category.
           </p>
         </div>
 
         <div className="p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-2xl shadow-sm space-y-3">
           <div className="text-3xl" aria-hidden="true">🤖</div>
-          <h3 className="font-bold text-lg text-slate-800 dark:text-slate-150">2. Smart Recommendations</h3>
+          <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">2. Smart Recommendations</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-            Explorable rule-based coaching lists that dynamically prioritize suggestions and evaluate certainty scores based on form completeness.
+            Get rule-based coaching tips dynamically prioritized by impact and your profile completeness level.
           </p>
         </div>
 
         <div className="p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-2xl shadow-sm space-y-3">
           <div className="text-3xl" aria-hidden="true">🔄</div>
-          <h3 className="font-bold text-lg text-slate-800 dark:text-slate-150">3. What-If Habit Simulator</h3>
+          <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">3. What-If Habit Simulator</h3>
           <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-            Adjust virtual dials for biking, diet swaps, recycling frequency, and energy trims to check real-time footprint drops and equivalents.
+            Adjust virtual sliders for transit, diet, recycling, and energy to see simulated carbon reductions in real time.
           </p>
         </div>
       </section>
@@ -94,11 +94,11 @@ export default function Home() {
       <section className="bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-100/50 dark:border-emerald-900/30 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6" aria-labelledby="coach-title">
         <div className="text-5xl select-none" role="img" aria-label="Avatar of Eco-Coach">🤖</div>
         <div className="space-y-2 text-center md:text-left">
-          <h3 id="coach-title" className="text-xl font-bold text-slate-800 dark:text-slate-150">
+          <h3 id="coach-title" className="text-xl font-bold text-slate-800 dark:text-slate-100">
             Meet Pilot, Your Personal Eco-Coach
           </h3>
           <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
-            "I'm here to analyze your weekly routines and recommend lightweight shifts. I don't use external cloud models—your data remains securely in your browser's LocalStorage. Let's make small adjustments that compound into major planetary savings!"
+            "I analyze your routines to recommend simple lifestyle shifts. No cloud servers are used—your data stays 100% private in LocalStorage. Let's make small changes that trigger major savings!"
           </p>
         </div>
       </section>
@@ -106,11 +106,11 @@ export default function Home() {
       {/* Impact Stories (Tiny static community calculations) */}
       <section className="space-y-6" aria-labelledby="impact-title">
         <div className="text-center space-y-2">
-          <h2 id="impact-title" className="text-2xl font-black text-slate-800 dark:text-slate-150">
+          <h2 id="impact-title" className="text-2xl font-black text-slate-800 dark:text-slate-100">
             Collective Community Impact
           </h2>
           <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-            Small habit reductions at scale trigger dramatic real-world improvements. Here is what we can accomplish.
+            Small individual shifts trigger significant collective improvements at scale.
           </p>
         </div>
 
@@ -123,7 +123,7 @@ export default function Home() {
               CO₂ Saved Annually
             </span>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              If {numUsers} users trim their footprints by {targetReductionPct}%.
+              Assuming {numUsers} users reduce footprints by {targetReductionPct}%.
             </p>
           </div>
 
@@ -135,7 +135,7 @@ export default function Home() {
               Trees Grown For 10 Yrs
             </span>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Absorbs the equivalent saved carbon volume.
+              Carbon volume equivalent absorbed over a decade.
             </p>
           </div>
 
@@ -147,7 +147,7 @@ export default function Home() {
               Gallons of Gas Avoided
             </span>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Eliminated fossil fuel consumption equivalent.
+              Fossil fuel consumption equivalent avoided.
             </p>
           </div>
         </div>
