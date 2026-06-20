@@ -65,26 +65,36 @@ To provide personalized coaching without heavy machine learning or external clou
 
 ## ✨ Features
 
-### 1. Carbon Calculator
-Collects weekly car and public transit parameters, monthly electricity bills, dietary meat intake, new purchases, and recycling habits. Instantly computes monthly CO₂ mass (kg) and projects yearly metrics (tons) with tree equivalents.
+### 1. Real-Time Carbon Calculator
+- **Inputs**: Private car travel (km/week), public transport trips, electricity usage (kWh/month), weekly meat meals, new purchases (items/month), and waste sorting options.
+- **Dynamic Previews**: Calculates monthly output (kg CO₂) and yearly projections (kg CO₂) dynamically as you type.
+- **Confidence Meter**: Visual progress bar tracking form completeness percentage.
+- **Visual Equivalences**: Translates annual footprint totals into trees required to absorb the emissions.
+- **Explain My Score**: Logic-based assessment panel explaining why your footprint is high and where you should focus reduction efforts.
 
-### 2. Smart Coaching Engine
-Displays dynamic advice cards showing:
-- Action title and logic-based context.
-- Estimated cost (Free, Low, or Saves Money) and difficulty (Easy, Medium, Hard).
-- Priority scores and the dynamic confidence meter.
+### 2. Smart Coaching & Recommendations
+- **Explainable Rules**: Matches target areas (Transport, Energy, Food, Shopping, Waste) using carbon intensity ratios.
+- **Priority Matrix**: Ranks coaching tips by priority score, listing cost indices (Free, Low, or Saves Money) and execution difficulty (Easy, Medium, Hard).
+- **Completeness Matching**: Computes action confidence level (High, Medium, Low) based on input questionnaire completeness.
 
-### 3. What-If Simulator
-Includes range dials that let users simulate offsets in real time (e.g., cutting driving mileage by 50% or reducing weekly meat consumption). Displays side-by-side bar charts of baseline vs. simulated footprint.
+### 3. What-If Habit Simulator
+- **Interactive Dials**: Range sliders to adjust transit swaps, white meat/plant food replacements, energy trims, and recycling habits.
+- **Immediate Metrics**: Displays simulated emission reductions, saving percentages, and equivalents (trees grown, gallons of gas avoided).
+- **Interactive Chart**: Integrates side-by-side Recharts bar charts comparing baseline vs. simulated footprint totals.
 
-### 4. Milestone Goal Planner
-Automatically crafts a structured 3-week checklist tailored to address the user's primary emissions sectors.
+### 4. 3-Week Personalized Goal Tracker
+- **Timeline Checklist**: Auto-generates weekly milestones targeting your highest carbon categories.
+- **Persistence**: Remembers checked/unchecked items in state and browser storage.
 
-### 5. Leaderboard & Achievements Wall
-Awards milestones (e.g., *Green Commuter*, *Zero Waste Hero*, *Diet Champion*) and monitors carbon improvement streaks.
+### 5. Achievements & Badges Wall
+- **Dynamic Badges**: Tracks lifestyle parameters to unlock visual badges (*First Step*, *Eco Conscious*, *Green Commuter*, *Green Diet Champion*, *Zero Waste Hero*, *Super Streaker*).
+- ** streaks**: Monitors footprint improvement streaks.
 
-### 6. Score Explanation & JSON Export
-Explains the logic behind scores in a clear panel under the results and allows downloading data in a clean `.json` file format.
+### 6. Dashboard Analytics & Demo Controls
+- **Visual Trends**: Recharts area charts mapping historical logs over time.
+- **Category Breakdown**: Recharts bar charts showing emissions share per sector.
+- **Demo Data Injector**: A `⚡ Load Demo Data` toggle to populate logs, streaks, and checklists instantly for evaluation.
+- **Data Controls**: `Export Report (.json)` utility to download assessment data, and a `Reset Data` button to clear local storage cache.
 
 ---
 
