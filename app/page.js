@@ -98,7 +98,7 @@ export default function Home() {
             Meet Pilot, Your Personal Eco-Coach
           </h3>
           <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
-            "I analyze your routines to recommend simple lifestyle shifts. No cloud servers are used—your data stays 100% private in LocalStorage. Let's make small changes that trigger major savings!"
+            &quot;I analyze your routines to recommend simple lifestyle shifts. No cloud servers are used—your data stays 100% private in LocalStorage. Let&apos;s make small changes that trigger major savings!&quot;
           </p>
         </div>
       </section>

@@ -93,7 +93,7 @@ export default function About() {
           Privacy-First Architecture
         </h2>
         <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-          CarbonPilot does not collect, sell, or transmit your behavioral metrics to any cloud database or analytics platform. 100% of calculations and records are saved client-side in your web browser's <code>localStorage</code> database. You can clear your entire profile cache at any point from the Dashboard page.
+          CarbonPilot does not collect, sell, or transmit your behavioral metrics to any cloud database or analytics platform. 100% of calculations and records are saved client-side in your web browser&apos;s <code>localStorage</code> database. You can clear your entire profile cache at any point from the Dashboard page.
         </p>
       </section>
     </div>

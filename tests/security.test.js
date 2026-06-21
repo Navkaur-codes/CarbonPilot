@@ -9,6 +9,9 @@ import {
 } from '../lib/storage';
 import { validateCarbonInputs } from '../lib/validation';
 import { DEFAULT_PROFILE, STORAGE_KEYS } from '../lib/constants';
+import InputField from '../components/InputField';
+import MilestoneCard from '../components/MilestoneCard';
+import StatCard from '../components/StatCard';
 
 // Lightweight in-memory localStorage mock for node environment
 if (typeof window === 'undefined') {
@@ -98,13 +101,16 @@ describe('Security & Schema Validation Tests', () => {
     const badGoals = [
       { week: 1, title: '', action: 'Reduce driving', target: '10%' }, // empty title
       { week: 2, title: 'Energy Goal', action: '', target: '10%' }, // empty action
-      { week: 3, title: 'Waste Goal', action: 'Recycle all items', target: 'Diversion', completed: 'true' } // string completed
+      { week: 3, title: 'Waste Goal', action: 'Recycle all items', target: 'Diversion', completed: 'true' }, // string completed
+      { week: 4, title: 'Travel Goal', action: 'Walk more', target: 'Fitness', completed: 'false' } // string false
     ];
 
     const res = validateAndSanitizeGoals(badGoals);
-    expect(res.length).toBe(1);
+    expect(res.length).toBe(2);
     expect(res[0].title).toBe('Waste Goal');
-    expect(res[0].completed).toBe(true); // coerced to boolean
+    expect(res[0].completed).toBe(true); // coerced to true
+    expect(res[1].title).toBe('Travel Goal');
+    expect(res[1].completed).toBe(false); // coerced to false
   });
 
   it('harsher input validation rejects negative numbers', () => {
@@ -118,7 +124,7 @@ describe('Security & Schema Validation Tests', () => {
     expect(validation.errors.carKmPerWeek).toContain('cannot be negative');
   });
 
-  it('saves and retrieves sanitized entries to check persistence', () => {
+  it('saves and retrieves versioned entries to check persistence and migration', () => {
     const profileData = {
       carKmPerWeek: '200',
       publicTripsPerWeek: '5',
@@ -129,8 +135,93 @@ describe('Security & Schema Validation Tests', () => {
     };
     
     setStorageItem(STORAGE_KEYS.PROFILE, profileData);
-    const retrieved = getStorageItem(STORAGE_KEYS.PROFILE, null);
     
+    // Check that it's physically stored as versioned JSON wrapping
+    const rawVal = window.localStorage.getItem(STORAGE_KEYS.PROFILE);
+    expect(rawVal).toContain('"version":1');
+    expect(rawVal).toContain('"data":{');
+
+    const retrieved = getStorageItem(STORAGE_KEYS.PROFILE, null);
     expect(retrieved).toEqual(profileData);
+  });
+
+  it('caps history growth to latest 50 logs', () => {
+    const logs = Array.from({ length: 65 }).map((_, i) => ({
+      date: `Month ${i}`,
+      totalMonthly: 100 + i,
+      totalYearly: 1200 + i * 12,
+      categories: { transport: 40, electricity: 30, food: 10, shopping: 10, waste: 10 },
+      completeness: 100
+    }));
+
+    const sanitized = validateAndSanitizeHistory(logs);
+    expect(sanitized.length).toBe(50);
+    expect(sanitized[0].date).toBe('Month 15'); // first 15 sliced out
+    expect(sanitized[49].date).toBe('Month 64');
+  });
+
+  it('detects and rejects non-finite number values', () => {
+    const badProfile = {
+      carKmPerWeek: 'Infinity',
+      publicTripsPerWeek: '1e999',
+      electricityKwhPerMonth: 'NaN',
+      meatMealsPerWeek: '15'
+    };
+
+    const sanitized = validateAndSanitizeProfile(badProfile);
+    expect(sanitized.carKmPerWeek).toBe('');
+    expect(sanitized.publicTripsPerWeek).toBe('');
+    expect(sanitized.electricityKwhPerMonth).toBe('');
+    expect(sanitized.meatMealsPerWeek).toBe('15');
+  });
+
+  it('tests keyboard accessibility attributes on InputField virtual DOM representation', () => {
+    const elementWithError = InputField({
+      id: 'km-input',
+      name: 'carKmPerWeek',
+      label: 'Mileage',
+      value: '200',
+      error: 'Cannot exceed max limit',
+      description: 'Weekly mileage count'
+    });
+
+    // Check props on input element
+    const labelWithError = elementWithError.props.children[0].props.children[0];
+    expect(labelWithError.props.htmlFor).toBe('km-input');
+
+    const inputWithErr = elementWithError.props.children[1];
+    expect(inputWithErr.props.id).toBe('km-input');
+    expect(inputWithErr.props['aria-invalid']).toBe(true);
+    expect(inputWithErr.props['aria-describedby']).toBe('km-input-error');
+
+    const elementWithDesc = InputField({
+      id: 'transit-input',
+      name: 'publicTripsPerWeek',
+      label: 'Transit',
+      value: '10',
+      description: 'Trips count'
+    });
+
+    const inputWithDesc = elementWithDesc.props.children[1];
+    expect(inputWithDesc.props['aria-invalid']).toBe(false);
+    expect(inputWithDesc.props['aria-describedby']).toBe('transit-input-desc');
+  });
+
+  it('tests accessibility attributes on MilestoneCard virtual DOM representation', () => {
+    const ach = { title: 'First Assessment', desc: 'Completed!', unlocked: true, icon: '🌱' };
+    const res = MilestoneCard({ ach });
+    
+    // Check that emoji icon has role="img" and matching aria-label
+    const iconSpan = res.props.children[0];
+    expect(iconSpan.props.role).toBe('img');
+    expect(iconSpan.props['aria-label']).toBe('First Assessment');
+  });
+
+  it('tests accessibility attributes on StatCard virtual DOM representation', () => {
+    const card = StatCard({ title: 'Total Footprint', value: '4.2', unit: 'tons', highlightText: '10% reduction', icon: '🌍' });
+    
+    // Check that icon is hidden from screen readers since it is decorative
+    const iconSpan = card.props.children[1].props.children[0];
+    expect(iconSpan.props['aria-hidden']).toBe('true');
   });
 });

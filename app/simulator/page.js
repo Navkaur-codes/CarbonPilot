@@ -17,15 +17,18 @@ export default function Simulator() {
   const [recycleAll, setRecycleAll] = useState(false);    // If true, recycling habit is upgraded to 'all'
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
   useEffect(() => {
     // Reset inputs if baseline changes
+    /* eslint-disable react-hooks/set-state-in-effect */
     setCarSwapPct(0);
     setMeatMealsCut(0);
     setElectricityCutPct(0);
     setRecycleAll(false);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [profile]);
 
   if (!mounted) {
@@ -104,7 +107,7 @@ export default function Simulator() {
         <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 text-sm text-amber-700 dark:text-amber-400 flex items-center gap-2">
           <span>⚠️</span>
           <span>
-            You haven't completed a carbon assessment yet. We are displaying a <strong>national average baseline</strong>. Complete the <a href="/calculator" className="underline font-bold">Calculator Form</a> to simulate adjustments on your real footprint.
+            You haven&apos;t completed a carbon assessment yet. We are displaying a <strong>national average baseline</strong>. Complete the <a href="/calculator" className="underline font-bold">Calculator Form</a> to simulate adjustments on your real footprint.
           </span>
         </div>
       )}

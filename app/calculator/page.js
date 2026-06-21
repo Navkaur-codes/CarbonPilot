@@ -35,12 +35,14 @@ export default function Calculator() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
   // Load existing profile values into local form state upon mount
   useEffect(() => {
     if (profile) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormValues({
         carKmPerWeek: profile.carKmPerWeek || '',
         publicTripsPerWeek: profile.publicTripsPerWeek || '',

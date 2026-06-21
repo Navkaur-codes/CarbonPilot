@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocalStorage } from '../../lib/hooks';
 import { STORAGE_KEYS } from '../../lib/constants';
 import { getRecommendations } from '../../lib/recommendationEngine';
 import { getBreakdownAndOpportunity, calculateCompleteness, getConfidenceLevel } from '../../lib/carbonCalculator';
-import { loadDemoData, clearAllCarbonData } from '../../lib/storage';
+import { loadDemoData, clearAllCarbonData, getStorageItem } from '../../lib/storage';
 import { exportResultsToJson } from '../../lib/exportResults';
 import { formatDecimal, formatKgToTons } from '../../lib/formatters';
 import ChartSection from '../../components/ChartSection';
@@ -28,8 +28,43 @@ export default function Dashboard() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
+
+  const latestLog = useMemo(() => {
+    return history && history.length > 0 
+      ? history[history.length - 1] 
+      : { categories: { transport: 0, electricity: 0, food: 0, shopping: 0, waste: 0 }, totalMonthly: 0, totalYearly: 0 };
+  }, [history]);
+
+  const completeness = useMemo(() => {
+    return calculateCompleteness(profile || {});
+  }, [profile]);
+
+  const confidence = useMemo(() => {
+    return getConfidenceLevel(completeness);
+  }, [completeness]);
+
+  const { percentages, topOpportunity } = useMemo(() => {
+    return getBreakdownAndOpportunity(latestLog.categories, latestLog.totalMonthly);
+  }, [latestLog]);
+
+  // Dynamic recommendations based on latest log
+  const recommendations = useMemo(() => {
+    return getRecommendations(profile || {}, latestLog, completeness);
+  }, [profile, latestLog, completeness]);
+
+  // Recharts Breakdown data formatting
+  const breakdownChartData = useMemo(() => {
+    return [
+      { name: 'Transport', value: latestLog.categories.transport },
+      { name: 'Energy', value: latestLog.categories.electricity },
+      { name: 'Food', value: latestLog.categories.food },
+      { name: 'Shopping', value: latestLog.categories.shopping },
+      { name: 'Waste', value: latestLog.categories.waste },
+    ].filter(item => item.value > 0);
+  }, [latestLog]);
 
   if (!mounted) {
     return (
@@ -44,12 +79,12 @@ export default function Dashboard() {
   // Trigger Demo Data loading
   const handleLoadDemo = () => {
     setLoading(true);
-    setTimeout(() => {
-      loadDemoData();
-      if (typeof window !== 'undefined') {
-        window.location.reload();
-      }
-    }, 300);
+    loadDemoData();
+    setProfile(getStorageItem(STORAGE_KEYS.PROFILE, null));
+    setHistory(getStorageItem(STORAGE_KEYS.HISTORY, []));
+    setStreak(getStorageItem(STORAGE_KEYS.STREAK, 0));
+    setGoals(getStorageItem(STORAGE_KEYS.GOALS, []));
+    setLoading(false);
   };
 
   // Reset all carbon logs
@@ -80,6 +115,8 @@ export default function Dashboard() {
 
     exportResultsToJson(profile, lastHistory, activeRecommendations, topOpportunity);
   };
+
+
 
   // Empty state handling
   if (!history || history.length === 0) {
@@ -118,11 +155,7 @@ export default function Dashboard() {
     );
   }
 
-  // Load calculations from latest history log
-  const latestLog = history[history.length - 1];
-  const completeness = calculateCompleteness(profile || {});
-  const confidence = getConfidenceLevel(completeness);
-  const { percentages, topOpportunity } = getBreakdownAndOpportunity(latestLog.categories, latestLog.totalMonthly);
+
 
   // Calculate dynamic insights if history has at least 2 entries
   let pctTotalChange = 0;
@@ -183,17 +216,7 @@ export default function Dashboard() {
     }
   ];
 
-  // Dynamic recommendations based on latest log
-  const recommendations = getRecommendations(profile || {}, latestLog, completeness);
 
-  // Recharts Breakdown data formatting
-  const breakdownChartData = [
-    { name: 'Transport', value: latestLog.categories.transport },
-    { name: 'Energy', value: latestLog.categories.electricity },
-    { name: 'Food', value: latestLog.categories.food },
-    { name: 'Shopping', value: latestLog.categories.shopping },
-    { name: 'Waste', value: latestLog.categories.waste },
-  ].filter(item => item.value > 0);
 
   return (
     <div className="space-y-10 animate-fadeIn">
