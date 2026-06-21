@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLocalStorage } from '../../lib/hooks';
+import { STORAGE_KEYS } from '../../lib/constants';
 import { calculateFootprint } from '../../lib/carbonCalculator';
 import ChartSection from '../../components/ChartSection';
 
 export default function Simulator() {
-  const [profile] = useLocalStorage('carbon_profile', null);
+  const [profile] = useLocalStorage(STORAGE_KEYS.PROFILE, null);
   const [mounted, setMounted] = useState(false);
 
   // Simulator adjustments state - declared at the top to satisfy React's Hook rules

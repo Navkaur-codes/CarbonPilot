@@ -2,20 +2,27 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLocalStorage } from '../../lib/hooks';
+import { STORAGE_KEYS } from '../../lib/constants';
 import { getRecommendations } from '../../lib/recommendationEngine';
-import { getBreakdownAndOpportunity, calculateCompleteness } from '../../lib/carbonCalculator';
+import { getBreakdownAndOpportunity, calculateCompleteness, getConfidenceLevel } from '../../lib/carbonCalculator';
 import { loadDemoData, clearAllCarbonData } from '../../lib/storage';
 import { exportResultsToJson } from '../../lib/exportResults';
+import { formatDecimal, formatKgToTons } from '../../lib/formatters';
 import ChartSection from '../../components/ChartSection';
 import RecommendationCard from '../../components/RecommendationCard';
 import EmptyState from '../../components/EmptyState';
 import ScoreExplanation from '../../components/ScoreExplanation';
+import StatCard from '../../components/StatCard';
+import MilestoneCard from '../../components/MilestoneCard';
 
+/**
+ * Main Carbon Pilot Dashboard Page
+ */
 export default function Dashboard() {
-  const [profile, setProfile] = useLocalStorage('carbon_profile', null);
-  const [history, setHistory] = useLocalStorage('carbon_history', []);
-  const [streak, setStreak] = useLocalStorage('carbon_streak', 0);
-  const [goals, setGoals] = useLocalStorage('carbon_goals', []);
+  const [profile, setProfile] = useLocalStorage(STORAGE_KEYS.PROFILE, null);
+  const [history, setHistory] = useLocalStorage(STORAGE_KEYS.HISTORY, []);
+  const [streak, setStreak] = useLocalStorage(STORAGE_KEYS.STREAK, 0);
+  const [goals, setGoals] = useLocalStorage(STORAGE_KEYS.GOALS, []);
 
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -37,10 +44,8 @@ export default function Dashboard() {
   // Trigger Demo Data loading
   const handleLoadDemo = () => {
     setLoading(true);
-    // Short simulated loader for smooth transition
     setTimeout(() => {
       loadDemoData();
-      // Reload states by accessing localStorage values manually to trigger refresh
       if (typeof window !== 'undefined') {
         window.location.reload();
       }
@@ -58,7 +63,7 @@ export default function Dashboard() {
     }
   };
 
-  // Toggle goal check box
+  // Toggle goal check box status
   const toggleGoal = (index) => {
     const nextGoals = [...goals];
     nextGoals[index].completed = !nextGoals[index].completed;
@@ -113,9 +118,10 @@ export default function Dashboard() {
     );
   }
 
-  // Load calculations from latest history entry
+  // Load calculations from latest history log
   const latestLog = history[history.length - 1];
   const completeness = calculateCompleteness(profile || {});
+  const confidence = getConfidenceLevel(completeness);
   const { percentages, topOpportunity } = getBreakdownAndOpportunity(latestLog.categories, latestLog.totalMonthly);
 
   // Calculate dynamic insights if history has at least 2 entries
@@ -152,7 +158,7 @@ export default function Dashboard() {
     });
   }
 
-  // Generate dynamic milestones list based on history values
+  // Generate dynamic achievements list based on logs history
   const milestones = [
     {
       id: 'ach-first',
@@ -221,41 +227,27 @@ export default function Dashboard() {
 
       {/* KPI Stats Grid */}
       <section className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" aria-label="Footprint Stats Summary">
-        <div className="p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm space-y-1">
-          <span className="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            Latest Footprint
-          </span>
-          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-400">
-            {latestLog.totalMonthly.toFixed(1)} <span className="text-sm font-semibold text-slate-400">kg/mo</span>
-          </span>
-        </div>
-
-        <div className="p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm space-y-1">
-          <span className="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            Yearly Projection
-          </span>
-          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-400">
-            {(latestLog.totalYearly / 1000).toFixed(2)} <span className="text-sm font-semibold text-slate-400">tons/yr</span>
-          </span>
-        </div>
-
-        <div className="p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm space-y-1">
-          <span className="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            Reduction Streak
-          </span>
-          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-            🔥 {streak} <span className="text-sm font-semibold text-slate-400">logs improved</span>
-          </span>
-        </div>
-
-        <div className="p-6 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm space-y-1">
-          <span className="block text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-            Form Confidence
-          </span>
-          <span className="block text-3xl font-black text-emerald-600 dark:text-emerald-400">
-            {completeness}% <span className="text-sm font-semibold text-slate-400">High</span>
-          </span>
-        </div>
+        <StatCard 
+          title="Latest Footprint" 
+          value={latestLog.totalMonthly.toFixed(1)} 
+          unit=" kg/mo" 
+        />
+        <StatCard 
+          title="Yearly Projection" 
+          value={formatKgToTons(latestLog.totalYearly)} 
+          unit=" tons/yr" 
+        />
+        <StatCard 
+          title="Reduction Streak" 
+          value={streak} 
+          unit=" logs improved" 
+          icon="🔥 " 
+        />
+        <StatCard 
+          title="Form Confidence" 
+          value={`${completeness}%`} 
+          unit={` ${confidence}`} 
+        />
       </section>
 
       {/* Dynamic Insights Panel */}
@@ -306,7 +298,7 @@ export default function Dashboard() {
         />
       </section>
 
-      {/* Weekly Goal Planner */}
+      {/* Weekly Goal Tracker */}
       {goals && goals.length > 0 && (
         <section className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-6 sm:p-8 rounded-3xl shadow-sm space-y-6" aria-labelledby="goals-heading">
           <div className="space-y-1">
@@ -343,7 +335,7 @@ export default function Dashboard() {
                     htmlFor={`goal-checkbox-${index}`} 
                     className={`font-semibold text-sm sm:text-base cursor-pointer ${
                       goal.completed 
-                        ? 'line-through text-slate-405' 
+                        ? 'line-through text-slate-400' 
                         : 'text-slate-800 dark:text-slate-100'
                     }`}
                   >
@@ -362,7 +354,7 @@ export default function Dashboard() {
         </section>
       )}
 
-      {/* Dynamic Coaching Recommendations */}
+      {/* Coaching Suggestions */}
       <section className="space-y-6" aria-labelledby="coach-recommendations">
         <div className="space-y-1">
           <h3 id="coach-recommendations" className="text-xl font-bold text-slate-800 dark:text-slate-100">
@@ -380,7 +372,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* Milestones & Progress Wall */}
+      {/* Progress & Milestones Wall */}
       <section className="space-y-6" aria-labelledby="milestones-heading">
         <div className="space-y-1">
           <h3 id="milestones-heading" className="text-xl font-bold text-slate-800 dark:text-slate-100">
@@ -393,27 +385,7 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {milestones.map((ach) => (
-            <div 
-              key={ach.id} 
-              className={`p-5 rounded-2xl border transition duration-150 text-center flex flex-col items-center justify-center space-y-2 ${
-                ach.unlocked 
-                  ? 'bg-emerald-500/5 border-emerald-100 dark:border-emerald-900/30' 
-                  : 'bg-slate-50/20 border-slate-100 dark:border-slate-900/40 opacity-40 grayscale'
-              }`}
-            >
-              <span className="text-4xl" role="img" aria-label={ach.title}>{ach.icon}</span>
-              <div>
-                <span className="block font-bold text-sm text-slate-800 dark:text-slate-100">{ach.title}</span>
-                <span className="block text-[11px] text-slate-400 mt-0.5">{ach.desc}</span>
-              </div>
-              <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
-                ach.unlocked 
-                  ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-400' 
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-400'
-              }`}>
-                {ach.unlocked ? 'Reached' : 'Pending'}
-              </span>
-            </div>
+            <MilestoneCard key={ach.id} ach={ach} />
           ))}
         </div>
       </section>

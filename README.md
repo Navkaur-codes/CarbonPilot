@@ -15,7 +15,8 @@ CarbonPilot empowers individuals to take charge of their greenhouse gas impact. 
 
 ---
 
-## 📐 Architecture
+## 📐 Architecture & Architectural Decisions
+
 CarbonPilot is built directly on the **Next.js App Router** and executes fully in the browser to maintain user privacy. 
 
 ```mermaid
@@ -41,12 +42,21 @@ graph TD
 ```
 
 ### Key Modules:
-- **`lib/carbonCalculator.js`**: Holds emission factors and calculates category percentages, tree absorption equivalences, and input completeness.
-- **`lib/recommendationEngine.js`**: Houses explainable rule-based logic to determine high-impact tips.
+- **`lib/constants.js`**: Consolidates all math coefficients, emission factors, input limits, disclaimers, and local storage keys.
+- **`lib/formatters.js`**: Provides pure functions for rounding decimals, converting kilograms to tons, and formatting dates.
+- **`lib/carbonCalculator.js`**: Handles emission factor logic, calculates category percentages, tree absorption equivalences, and input completeness.
+- **`lib/recommendationEngine.js`**: Houses explainable, defensive rule-based logic to determine high-impact tips.
 - **`lib/goalPlanner.js`**: Constructs a weekly habit path targeting primary carbon sectors.
-- **`lib/validation.js`**: Sanitizes forms and protects against invalid or negative values.
-- **`lib/storage.js`**: Safe wrapper around `localStorage` preventing hydration mismatches during server rendering.
+- **`lib/validation.js`**: Sanitizes inputs and validates form limits to protect against overflow or negative values.
+- **`lib/storage.js`**: A secure, bidirectional schema validation and recovery layer around `localStorage` preventing hydration mismatches and handling corruption.
 - **`lib/exportResults.js`**: Triggers client-side `.json` file downloads of carbon scores and recommendations.
+
+### Key Architectural Decisions (ADR)
+1. **Client-Side State Isolation**: State is kept purely client-side to guarantee 100% user data privacy. No external servers or API calls are used.
+2. **Bidirectional LocalStorage Schema Validation**: To prevent application crashes from database corruption, all read/write paths in `storage.js` are bidirectionally validated. If invalid JSON, null fields, negative numbers, or overflow numbers exceeding limits are found in `localStorage`, the storage engine automatically cleans and restores data to safe fallback defaults.
+3. **Centralized Error Boundaries**: A custom centralized `ErrorBoundary` wraps route layouts to intercept rendering failures and provide a fallback screen without breaking the overall application container.
+4. **Deduplicated Component Strategy**: Large page routers (`calculator` and `dashboard`) are simplified by extracting common layout items into reusable, single-responsibility units (`InputField`, `CalculatorPreview`, `StatCard`, `MilestoneCard`).
+5. **Production Console Silence**: Custom logger checking checks `process.env.NODE_ENV !== 'production'` to eliminate telemetry and warning outputs in compiled builds.
 
 ---
 
